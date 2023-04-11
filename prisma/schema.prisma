@@ -54,7 +54,7 @@ model User {
     emailVerified DateTime?
     image         String?
     tweets Tweet[] @relation("tweet")
-    likedTweets Tweet[]
+    likedTweets UserOnTweet[]
     accounts      Account[]
     sessions      Session[]
 }
@@ -72,18 +72,20 @@ model Tweet {
     id String @id @default(cuid()) 
     content String  
     authorId String
-    likedBy User[]
+    likedBy UserOnTweet[]
     author User @relation(name: "tweet", fields: [authorId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
 }
 
-// model UserOnTweet {
-//   user       User     @relation(fields: [userId], references: [id])
-//   userId     String // relation scalar field (used in the `@relation` attribute above)
-//   tweetId String // relation scalar field (used in the `@relation` attribute above)
-//   tweet   Tweet @relation(fields: [tweetId], references: [id])
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
+model UserOnTweet {
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String // relation scalar field (used in the `@relation` attribute above)
+  tweetId String // relation scalar field (used in the `@relation` attribute above)
+  tweet   Tweet @relation(fields: [tweetId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, tweetId])
+}
