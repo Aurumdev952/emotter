@@ -2,12 +2,12 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar"
 
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  console.log(hello.data?.greeting);
+  
   
 
   return (
@@ -15,14 +15,14 @@ const Home: NextPage = () => {
       <Head>
         <title>Emotter</title>
         <meta name="description" content="Share what you think!" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/emotter.svg" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-black">
         <div className="min-h-screen w-[30rem] border-x-[.1rem] border-white">
           <div></div>
+          <AuthShowcase/> 
           <div></div>
         </div>
-        {/* <AuthShowcase/> */}
       </main>
     </>
   );
@@ -43,6 +43,13 @@ const AuthShowcase: React.FC = () => {
       <p className="text-center text-2xl text-white">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
+        {secretMessage && <div>
+          <Avatar>
+            <AvatarImage src={typeof sessionData?.user.image === "string" ? sessionData?.user.image : undefined} />
+            <AvatarFallback>{sessionData?.user.name}</AvatarFallback>
+          </Avatar>
+
+          </div>}
       </p>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
