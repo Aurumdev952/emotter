@@ -37,7 +37,7 @@ export const TypographyH4:React.FC<Props> = ({ children }) => {
   }
 export const TypographyP:React.FC<Props> = ({ children }) => {
     return (
-        <p className="leading-7 [&:not(:first-child)]:mt-6">
+        <p className="leading-7 [&:not(:first-child)]:mt-6 w-full break-all">
         {children}
       </p>
     )

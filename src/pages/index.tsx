@@ -11,12 +11,12 @@ import { Button } from "~/components/ui/button";
 import { TypographyH4 } from "~/components/ui/typography";
 import { NewTweet } from "~/components/newtweet";
 import { Tweet } from "~/components/tweet";
-
+import { Loader2 } from "lucide-react"
 
 
 
 const Home: NextPage = () => {
-  const { data: tweets } = api.tweet.getAllTweets.useQuery({
+  const { data: tweets, isLoading } = api.tweet.getAllTweets.useQuery({
     number: 10,
     offset: 0,
   }) 
@@ -29,12 +29,14 @@ const Home: NextPage = () => {
       </Head>
       <main className="container bg-[#0d1726]">
         <div className="menu border-r-[.01rem] border-slate-700"></div>
-        <div className="feed border-x-[.01rem] border-slate-700 px-3 flex flex-col justify-start gap-2 items-stretch">
+        <div className="feed border-x-[.01rem] border-slate-700 px-2 flex flex-col justify-start gap-2">
           <div className="title border-b-[.01rem] border-slate-700 p-3">
             <AuthShowcase />
           </div>
-          {!!tweets && <>{tweets?.map((tweet, key) => (<Tweet {...tweet} key={key}/>))}</>}
-          {!tweets && <p>loading</p>}
+          <div className="w-full h-[30rem] overflow-y-scroll scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md scrollbar-thumb-slate-400 scrollbar-track-transparent">
+          {!!tweets && <div className="w-full flex flex-col justify-start gap-2">{tweets?.map((tweet, key) => (<Tweet {...tweet} key={key}/>))}</div>}
+          {isLoading && <div className="w-full h-full flex flex-col justify-center items-center"><Loader2 className="mr-2 h-10 w-10 animate-spin" /></div>}
+          </div>
         </div>
         <div className="sidebar border-l-[.01rem] border-slate-700"></div>
       </main>
@@ -58,11 +60,18 @@ const AuthShowcase: React.FC = () => {
     <TypographyH4>
       Sign in to start posting.
     </TypographyH4>
-    <Button
-    onClick={() => void signIn("discord")}
-    >
-      Sign in
-    </Button>
+      <Button
+      onClick={() => void signIn("discord")}
+      >
+        Sign in with Discord
+      </Button>
+      <Button
+      onClick={() => void signIn("github")}
+      >
+        Sign in with Github
+      </Button>
+
+
     </div>}
     
     {sessionData && <NewTweet user={sessionData.user} expires={sessionData.expires} />}

@@ -43,14 +43,17 @@ export const tweetRouter = createTRPCRouter({
         skip: input.offset,
         include: {
             author: true
+        },
+        orderBy: {
+          createdAt: "desc"
         }
     })
     return tweets
   }),
   createTweet: tweetInputProcedure.mutation(async ({ input, ctx }) => {
-    await ctx.prisma.tweet.create({
+    const tweet = await ctx.prisma.tweet.create({
         data: input
     })
-    return true
+    return tweet
   })
 });
