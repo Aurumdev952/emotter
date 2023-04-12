@@ -128,3 +128,12 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+
+// export const createContext = async (opts: CreateNextContextOptions) => {
+//   const session = await getServerAuthSession({ req: opts.req });
+ 
+//   return {
+//     session,
+//   };
+// };

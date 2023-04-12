@@ -9,7 +9,7 @@ import {
     publicProcedure,
     protectedProcedure,
 } from "~/server/api/trpc";
-import { prisma } from "~/server/db";
+
 
 export const tweetInputProcedure = protectedProcedure.input(z.object({
     content: z.string(),
@@ -36,8 +36,9 @@ export const tweetRouter = createTRPCRouter({
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
-  getAllTweets: paginationsInputProcedure.query(async ({ input }) => {
-    const tweets = await prisma.tweet.findMany({
+  getAllTweets: paginationsInputProcedure.query(async ({ input, ctx }) => {
+    
+    const tweets = await ctx.prisma.tweet.findMany({
         take: input.number,
         skip: input.offset,
         include: {
@@ -46,10 +47,9 @@ export const tweetRouter = createTRPCRouter({
     })
     return tweets
   }),
-  createTweet: tweetInputProcedure.mutation(async (req) => {
-    const newTweet = req.input
-    await prisma.tweet.create({
-        data: newTweet
+  createTweet: tweetInputProcedure.mutation(async ({ input, ctx }) => {
+    await ctx.prisma.tweet.create({
+        data: input
     })
     return true
   })

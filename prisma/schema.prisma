@@ -89,3 +89,4 @@ model UserOnTweet {
 
   @@id([userId, tweetId])
 }
+
