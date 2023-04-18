@@ -42,7 +42,8 @@ export const tweetRouter = createTRPCRouter({
         take: input.number,
         skip: input.offset,
         include: {
-            author: true
+            author: true,
+            likedBy: true
         },
         orderBy: {
           createdAt: "desc"
@@ -55,5 +56,27 @@ export const tweetRouter = createTRPCRouter({
         data: input
     })
     return tweet
+  }),
+  likeTweet: protectedProcedure.input(z.object({
+    userId: z.string(),
+    tweetId: z.string()
+  })).mutation( async ({ input, ctx }) => {
+    const newLike = await ctx.prisma.userOnTweet.create({
+      data: {
+        ...input
+      }
+    })
+    return newLike
+  }),
+  unlikeTweet: protectedProcedure.input(z.object({
+    userId: z.string(),
+    tweetId: z.string()
+  })).mutation(async ({ ctx, input }) => {
+    const unlike = await ctx.prisma.userOnTweet.delete({
+    where: {
+      userId_tweetId: input
+      }  
+    })
+    return unlike 
   })
 });
