@@ -34,7 +34,7 @@ const Home: NextPage = () => {
             </TypographyP>
           </div>
           <div className="w-full h-full overflow-y-scroll scrollbar scrollbar-w-1 scrollbar-thumb-rounded-md scrollbar-thumb-slate-400 scrollbar-track-transparent pt-10">
-          <div className="title border-b-[.01rem] border-slate-700 p-3 pt-0">
+          <div className="title border-b-[.01rem] border-slate-700 p-3">
             <AuthShowcase />
           </div>
           {!!tweets && <div className="w-full flex flex-col justify-start gap-2 pb-2">{tweets.length > 0 ? <>{tweets?.map((tweet, key) => (<Tweet {...tweet} key={key}/>))}</> : <div className="w-full h-full flex flex-col gap-2 justify-center items-center"><TypographyH4>no posts yet</TypographyH4><TypographySmall>be the first to post😉</TypographySmall></div>}</div>}
