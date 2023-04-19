@@ -7,7 +7,6 @@ import { ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 dayjs.extend(relativeTime)
 
 

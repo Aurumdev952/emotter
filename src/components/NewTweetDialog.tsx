@@ -10,9 +10,11 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog"
 import { NewTweet } from "./newtweet"
+import { useSession  } from "next-auth/react";
 
 
 export function DialogTweet() {
+  const { status } = useSession()
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -20,7 +22,7 @@ export function DialogTweet() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[40rem] bg-[#0d1726]">
         <DialogHeader>
-          <DialogTitle className="text-white">New post</DialogTitle>
+          <DialogTitle className="text-white">{status !== "unauthenticated" ? (<>New post</>) : (<>log in to post</>)}</DialogTitle>
           {/* <DialogDescription>
             
           </DialogDescription> */}
