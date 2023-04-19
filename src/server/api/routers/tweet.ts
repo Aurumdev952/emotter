@@ -36,6 +36,18 @@ export const tweetRouter = createTRPCRouter({
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
+  getTweet: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
+    const tweet = await ctx.prisma.tweet.findUnique({
+      where: {
+        id: input
+      },
+      include: {
+        author: true,
+        likedBy: true
+      }
+    })
+    return tweet
+  }),
   getAllTweets: paginationsInputProcedure.query(async ({ input, ctx }) => {
     
     const tweets = await ctx.prisma.tweet.findMany({

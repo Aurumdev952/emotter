@@ -10,10 +10,9 @@ import React from "react";
 import { Button } from "~/components/ui/button";
 import { TypographyH3, TypographyH4, TypographyP, TypographySmall } from "~/components/ui/typography";
 import { NewTweet } from "~/components/newtweet";
-import { Tweet } from "~/components/tweet";
 import { Loader2 } from "lucide-react"
-import { DialogTweet } from "~/components/NewTweetDialog";
-import { EnvelopeIcon, UserCircleIcon, HomeIcon } from '@heroicons/react/24/solid'
+import Layout from "~/components/Layout";
+import { Tweet } from "~/components/tweet";
 
 
 const Home: NextPage = () => {
@@ -28,16 +27,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Share what you think!" />
         <link rel="icon" href="/emotter.svg" />
       </Head>
-      <main className="container bg-[#0d1726]">
-        <div className="menu border-r-[.01rem] border-slate-700 flex flex-col justify-start items-center py-10 gap-5">
-          
-            <Button className="hover:text-[#0d1726] w-[10rem]"><HomeIcon className="h-4 w-5 mr-2" /> home</Button>
-            <Button className="hover:text-[#0d1726] w-[10rem]"><EnvelopeIcon className="h-4 w-5 mr-2" /> messages</Button>
-            <Button className="hover:text-[#0d1726] w-[10rem]"><UserCircleIcon className="h-4 w-5 mr-2" /> profile</Button>
-          
-          <DialogTweet />
-        </div>
-        <div className="feed border-x-[.01rem] border-slate-700 px-2 flex flex-col justify-start gap-2 relative">
+      <Layout>
           <div className="absolute w-full top-0 left-0 h-10 glass z-10 pl-4 pt-1">
             <TypographyP>
               Home
@@ -51,9 +41,7 @@ const Home: NextPage = () => {
           {isLoading && <div className="w-full h-full flex flex-col justify-start pt-16 items-center"><Loader2 className="mr-2 h-10 w-10 animate-spin" /></div>}
           {isError && <div className="w-full h-full flex flex-col justify-start pt-16 items-center"><TypographyH3>Error has occured</TypographyH3></div>}
           </div>
-        </div>
-        <div className="sidebar border-l-[.01rem] border-slate-700"></div>
-      </main>
+      </Layout>
     </>
   );
 };
