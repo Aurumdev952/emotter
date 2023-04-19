@@ -12,7 +12,7 @@ dayjs.extend(relativeTime)
 
 
 
-export const Tweet: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({content, createdAt, id, author, likedBy}) => {
+export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({content, createdAt, id, author, likedBy}) => {
   const { data } = useSession()
   const user = data?.user
   const [postLiked, setPostLiked] = useState<boolean>(() => {
@@ -45,8 +45,8 @@ export const Tweet: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({cont
 
 
 
-  return (<div className="w-full border-[.1rem] p-2 rounded-md border-slate-300">
-      <div className="flex items-center justify-start pl-3 pt-0 gap-2 border-b-[.01rem] border-slate-700 p-3">
+  return (<div className="w-full">
+      <div className="flex items-center justify-start pl-3 gap-2 border-b-[.01rem] border-slate-700 p-3 pt-5">
       <Avatar>
         <AvatarImage src={typeof author.image === "string" ? author.image : undefined} alt={typeof author.name === "string" ? author.name : undefined} />
         <AvatarFallback>{author.name}</AvatarFallback>
@@ -58,12 +58,12 @@ export const Tweet: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({cont
         {dayjs(createdAt).fromNow()}
       </TypographySubtle>
       </div>
-      <Link href={`/post/${id}`} className="p-5">
+      <div className="p-5">
         <TypographyP>
             {content}
         </TypographyP>
-      </Link>
-      <div className="grid grid-cols-2 grid-rows-1 border-t-[.01rem] p-2 border-slate-700">
+      </div>
+      <div className="grid grid-cols-2 grid-rows-1 border-y-[.01rem] p-2 border-slate-700">
         <div className="flex justify-center items-center gap-4">
           <TypographySmall>{likes.toString()}</TypographySmall>
           <button className={
