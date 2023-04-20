@@ -1,16 +1,15 @@
 import { ArrowBigLeftIcon, Loader2 } from "lucide-react";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Layout from "~/components/Layout";
 import { TweetLarge } from "~/components/tweetLarge";
 import { TypographyH3 } from "~/components/ui/typography";
+import { ssgHelper } from "~/server/api/helper";
 import { api } from "~/utils/api";
 
-const Post: NextPage = () => {
-    const router = useRouter()
-    const { id } = router.query
+const Post: NextPage<{ id: string }> = ({ id }) => {
     const postId: string = id !== undefined && typeof id === "string" ? id : ""; 
     const { data: tweet, isLoading, isError } = api.tweet.getTweet.useQuery(postId);
     return (
@@ -42,3 +41,18 @@ const Post: NextPage = () => {
 };
 
 export default Post;
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const id = context.params?.id
+  if (typeof id !== "string") throw new Error("no id");
+  const ssr = ssgHelper()
+  await ssr.tweet.getTweet.prefetch(id)
+  return {
+    props: {
+      trpcState: ssr.dehydrate(),
+      id
+    },
+  };
+}
