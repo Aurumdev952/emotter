@@ -2,7 +2,6 @@ import { ArrowBigLeftIcon, Loader2 } from "lucide-react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import Layout from "~/components/Layout";
 import { TweetLarge } from "~/components/tweetLarge";
 import { TypographyH3 } from "~/components/ui/typography";

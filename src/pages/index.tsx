@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { type NextPage } from "next";
+import { type GetServerSideProps, type NextPage } from "next";
 import Head from "next/head";
 import { signIn, useSession, } from "next-auth/react";
 
@@ -13,6 +13,7 @@ import { NewTweet } from "~/components/newtweet";
 import { Loader2 } from "lucide-react"
 import Layout from "~/components/Layout";
 import { Tweet } from "~/components/tweet";
+import { ssgHelper } from "~/server/api/helper";
 
 
 const Home: NextPage = () => {
@@ -89,7 +90,20 @@ const AuthShowcase: React.FC = () => {
 
 
 
+export const getServerSideProps: GetServerSideProps = async () => {
 
+
+  const ssr = ssgHelper()
+  await ssr.tweet.getAllTweets.prefetch({
+    number: 100,
+    offset: 0,
+  })
+  return {
+    props: {
+      trpcState: ssr.dehydrate(),
+    }
+  };
+}
 
 
 
