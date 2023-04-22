@@ -18,7 +18,7 @@ export function DialogTweet() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="hover:text-[#0d1726] w-[10rem]"><Plus /> new post</Button>
+        <Button className="hover:text-[#0d1726] w-[10rem] flex justify-start pl-6 gap-1"><Plus /> new post</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[40rem] bg-[#0d1726]">
         <DialogHeader>

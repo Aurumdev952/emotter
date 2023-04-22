@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -13,7 +14,7 @@ import {
 
 export const tweetInputProcedure = protectedProcedure.input(z.object({
     content: z.string(),
-    authorId: z.string()
+    // authorId: z.string()
 }))
 
 export const paginationsInputProcedure = publicProcedure.input(z.object({
@@ -46,10 +47,15 @@ export const tweetRouter = createTRPCRouter({
         likedBy: true
       }
     })
+    if (tweet === null) {
+      throw new TRPCError({
+          code: "BAD_REQUEST",
+          cause: "tweet not found"
+      })
+  }
     return tweet
   }),
   getAllTweets: paginationsInputProcedure.query(async ({ input, ctx }) => {
-    
     const tweets = await ctx.prisma.tweet.findMany({
         take: input.number,
         skip: input.offset,
@@ -65,28 +71,37 @@ export const tweetRouter = createTRPCRouter({
   }),
   createTweet: tweetInputProcedure.mutation(async ({ input, ctx }) => {
     const tweet = await ctx.prisma.tweet.create({
-        data: input
+        data: {
+          authorId: ctx.session.user.id,
+          content: input.content
+        }
     })
     return tweet
   }),
   likeTweet: protectedProcedure.input(z.object({
-    userId: z.string(),
+    // userId: z.string(),
     tweetId: z.string()
   })).mutation( async ({ input, ctx }) => {
+    const userId = ctx.session.user.id 
     const newLike = await ctx.prisma.userOnTweet.create({
       data: {
-        ...input
+        userId: userId,
+        tweetId: input.tweetId
       }
     })
     return newLike
   }),
   unlikeTweet: protectedProcedure.input(z.object({
-    userId: z.string(),
+    // userId: z.string(),
     tweetId: z.string()
   })).mutation(async ({ ctx, input }) => {
+    const userId = ctx.session.user.id 
     const unlike = await ctx.prisma.userOnTweet.delete({
     where: {
-      userId_tweetId: input
+      userId_tweetId: {
+        userId: userId,
+        tweetId: input.tweetId
+      }
       }  
     })
     return unlike 

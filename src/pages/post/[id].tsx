@@ -8,6 +8,9 @@ import { TypographyH3 } from "~/components/ui/typography";
 import { ssgHelper } from "~/server/api/helper";
 import { api } from "~/utils/api";
 
+
+// TODO: add error handling for incorrect post id in url like post not found
+
 const Post: NextPage<{ id: string }> = ({ id }) => {
     const postId: string = id !== undefined && typeof id === "string" ? id : ""; 
     const { data: tweet, isLoading, isError } = api.tweet.getTweet.useQuery(postId);

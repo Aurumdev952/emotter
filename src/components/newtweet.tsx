@@ -7,6 +7,7 @@ import { Button } from "~/components/ui/button";
 import { Loader2, LogOut } from "lucide-react";
 import { api } from "~/utils/api";
 import { useState } from "react";
+import { toast } from 'react-hot-toast'
 
 export const NewTweet: React.FC = () => {
   const { data, status } = useSession()
@@ -19,7 +20,11 @@ export const NewTweet: React.FC = () => {
       await utils.tweet.getAllTweets.refetch();
       setIsposting(false);
       setContent("");
+      toast.success("post success")
     },
+    onError: () => {
+      toast.error("error posting")
+    }
   });
 
   if (status === "authenticated") {
@@ -33,7 +38,6 @@ export const NewTweet: React.FC = () => {
             setIsposting(true);
             newtweet.mutate({
               content: content,
-              authorId: user.id,
             });
           }
         }}
@@ -69,6 +73,8 @@ export const NewTweet: React.FC = () => {
               className="w-full"
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              spellCheck={false}
+              autoComplete="off"
             />
             <Button className="bg-slate-300 text-[#0d1726]" type="submit">
               {isposting ? (
