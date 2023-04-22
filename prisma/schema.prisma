@@ -61,6 +61,7 @@ model User {
     bio           String?
     tweets Tweet[] @relation("tweet")
     likedTweets UserOnTweet[]
+    comments Comment[]
     accounts      Account[]
     sessions      Session[]
 }
@@ -79,6 +80,7 @@ model Tweet {
     content String  
     authorId String
     likedBy UserOnTweet[]
+    comments Comment[]
     author User @relation(name: "tweet", fields: [authorId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -100,3 +102,17 @@ model UserOnTweet {
   @@index([userId])
 }
 
+
+model Comment {
+    id String @id @default(cuid()) 
+    tweetId String
+    authorId String
+    tweet Tweet @relation(fields: [tweetId], references: [id])
+    author User @relation(fields: [authorId], references: [id])
+    content String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([tweetId])
+    @@index([authorId])
+}
