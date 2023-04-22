@@ -10,6 +10,8 @@ env:
   DISCORD_CLIENT_SECRET: "sass"
   GITHUB_CLIENT_ID: "assasa"
   GITHUB_CLIENT_SECRET: "sasasa"
+  GOOGLE_CLIENT_ID: "swswswq"
+  GOOGLE_CLIENT_SECRET: "swswswq"
 
 jobs:
   build:
