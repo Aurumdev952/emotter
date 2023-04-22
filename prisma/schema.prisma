@@ -104,7 +104,7 @@ model UserOnTweet {
 
 
 model Comment {
-    id String @id @default(cuid()) 
+    id String @default(cuid()) 
     tweetId String
     authorId String
     tweet Tweet @relation(fields: [tweetId], references: [id])
@@ -113,6 +113,7 @@ model Comment {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    @@id([id, tweetId, authorId])
     @@index([tweetId])
     @@index([authorId])
 }
