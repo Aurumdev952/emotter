@@ -7,6 +7,10 @@ import { ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
+import { toast } from 'react-hot-toast'
+import classNames from "classnames";
+import Link from "next/link";
+
 dayjs.extend(relativeTime)
 
 
@@ -16,13 +20,13 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
   const user = data?.user
   const [postLiked, setPostLiked] = useState<boolean>(() => {
     if (user === undefined) return false
-    let is_liked = false
-    likedBy.forEach(like => {
-      if (like.userId === user.id) {
-        is_liked = true
-      }
-    })
-    return is_liked
+    const is_liked = likedBy.find(like => like.userId === user.id)
+    // likedBy.forEach(like => {
+    //   if (like.userId === user.id) {
+    //     is_liked = true
+    //   }
+    // })
+    return is_liked !== undefined ? true : false
   })
   const [likes, setLikes] = useState<number>(likedBy.length)
   const likepost = api.tweet.likeTweet.useMutation({
@@ -31,6 +35,14 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
         return prev + 1
       })
       setPostLiked(true)
+      toast.success("Success liking")
+    },
+    onError: ({ data }) => {
+      // setLikes((prev) => {
+      //   return prev - 1
+      // })
+      // setPostLiked(false)
+      toast.error("error liking post")
     }
   })
   const unlikePost = api.tweet.unlikeTweet.useMutation({
@@ -39,7 +51,15 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
         return prev - 1
       })
       setPostLiked(false)
-    }
+    },
+    onError: () => {
+      // setLikes((prev) => {
+      //   return prev + 1
+      // })
+      // setPostLiked(true)
+      toast.error("error unliking post")
+    },
+    
   })
 
 
@@ -50,9 +70,14 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
         <AvatarImage src={typeof author.image === "string" ? author.image : undefined} alt={typeof author.name === "string" ? author.name : undefined} />
         <AvatarFallback>{author.name}</AvatarFallback>
       </Avatar>
-      <TypographySmall>
+
+      {/* <Link href className="text-sm font-medium leading-none">
+          @{typeof author.name === "string" ? author.name : ''}
+        </Link> */}
+      <Link href={`/user/${author.id}`}>
         @{typeof author.name === "string" ? author.name : ''}
-      </TypographySmall>
+      </Link>
+
       <TypographySubtle>
         {dayjs(createdAt).fromNow()}
       </TypographySubtle>
@@ -65,9 +90,12 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
       <div className="grid grid-cols-2 grid-rows-1 border-y-[.01rem] p-2 border-slate-700">
         <div className="flex justify-center items-center gap-4">
           <TypographySmall>{likes.toString()}</TypographySmall>
-          <button className={
-            postLiked ? "w-10 h-10 rounded-full bg-slate-100 bg-opacity-10 hover:bg-transparent flex justify-center items-center duration-100 transition-colors" : "w-10 h-10 rounded-full bg-transparent hover:bg-slate-100 hover:bg-opacity-10 flex justify-center items-center"
-        }
+          <button 
+         className={classNames("w-10 h-10 rounded-full flex justify-center items-center duration-100 transition-colors",
+         {
+           "bg-slate-100 bg-opacity-10 hover:bg-opacity-5": postLiked,
+           "bg-transparent hover:bg-slate-100 hover:bg-opacity-10": !postLiked
+         })}
         onClick={() => {
           if (user !== undefined) {
             if (!postLiked) {

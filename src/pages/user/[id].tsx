@@ -5,7 +5,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Layout from "~/components/Layout";
 import { UserProfileComp } from "~/components/UserProfileComp";
-import { TweetLarge } from "~/components/tweetLarge";
+
 import {
   TypographyH3,
   TypographyH4,
@@ -94,7 +94,6 @@ const UserTabs: React.FC<RouterOutputs["user"]["getUser"]> = ({
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center gap-2">
                 <TypographyH4>no posts yet</TypographyH4>
-                <TypographySmall>no post here yet</TypographySmall>
               </div>
             )}
           </div>
@@ -112,7 +111,6 @@ const UserTabs: React.FC<RouterOutputs["user"]["getUser"]> = ({
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center gap-2">
                 <TypographyH4>no posts yet</TypographyH4>
-                <TypographySmall>no post here yet</TypographySmall>
               </div>
             )}
           </div>
