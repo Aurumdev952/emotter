@@ -48,6 +48,7 @@ export const tweetRouter = createTRPCRouter({
       include: {
         author: true,
         likedBy: true,
+        comments: true
       },
     });
     if (tweet === null) {
@@ -65,6 +66,7 @@ export const tweetRouter = createTRPCRouter({
       include: {
         author: true,
         likedBy: true,
+        comments: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -117,4 +119,36 @@ export const tweetRouter = createTRPCRouter({
       });
       return unlike;
     }),
+  commentOntweet: protectedProcedure
+    .input(
+      z.object({
+        tweetId: z.string(),
+        content: z.string().max(200).min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const comment = await ctx.prisma.comment.create({
+        data: {
+          content: input.content,
+          tweetId: input.tweetId,
+          authorId: ctx.session.user.id
+        }
+      })
+      return comment
+    }),
+    getCommentOnTweets: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
+      const comments = await ctx.prisma.comment.findMany({
+        where: {
+          tweetId: input 
+        },
+        include: {
+          author: true
+        },
+        orderBy: {
+          createdAt: "desc"
+        }
+      })
+
+      return comments
+    })
 });

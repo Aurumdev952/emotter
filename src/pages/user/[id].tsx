@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { ArrowBigLeftIcon, Loader2 } from "lucide-react";
 import type { GetServerSideProps, NextPage } from "next";
@@ -9,7 +12,6 @@ import { UserProfileComp } from "~/components/UserProfileComp";
 import {
   TypographyH3,
   TypographyH4,
-  TypographySmall,
 } from "~/components/ui/typography";
 import { ssgHelper } from "~/server/api/helper";
 import { type RouterOutputs, api } from "~/utils/api";
@@ -37,7 +39,6 @@ const UserProfile: NextPage<{ id: string, color: ColorElement["hex"] }> = ({ id,
           <p className="leading-7">Post</p>
         </div>
         <div className="h-full w-full overflow-y-scroll pt-10 scrollbar scrollbar-track-transparent scrollbar-thumb-slate-400 scrollbar-thumb-rounded-md scrollbar-w-1">
-        
           {!!user && (
             <div className="flex w-full flex-col items-center justify-start">
               <UserProfileComp {...user} color={color} />

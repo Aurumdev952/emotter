@@ -1,3 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog"
+import { NewComment } from "./NewComment";
 import { type RouterOutputs } from "~/utils/api";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
@@ -7,7 +20,7 @@ import {
 } from "~/components/ui/typography";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { ThumbsUp } from "lucide-react";
+import { MessageSquare, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
@@ -24,8 +37,9 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
   id,
   author,
   likedBy,
+  comments,
 }) => {
-  const { data } = useSession();
+  const { data, status } = useSession();
   const user = data?.user;
   const [postLiked, setPostLiked] = useState<boolean>(() => {
     if (user === undefined) return false;
@@ -38,6 +52,8 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
     return is_liked !== undefined ? true : false;
   });
   const [likes, setLikes] = useState<number>(likedBy.length);
+  const [commentsCount, setComments] = useState<number>(comments.length);
+  const [commentState, setCommentstate] = useState<boolean>(false)
   const likepost = api.tweet.likeTweet.useMutation({
     onSuccess: () => {
       setLikes((prev) => {
@@ -46,7 +62,7 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
       setPostLiked(true);
       toast.success("Success liking");
     },
-    onError: ({ data }) => {
+    onError: ({ }) => {
       // setLikes((prev) => {
       //   return prev - 1
       // })
@@ -69,6 +85,15 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
       toast.error("error unliking post");
     },
   });
+
+  const updatedComment = () => {
+    setComments(prev => {
+      return prev + 1
+    })
+    setCommentstate(false)
+  }
+
+
 
   return (
     <div className="w-full rounded-md border-[.1rem] border-slate-300 p-2">
@@ -124,7 +149,49 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
             <ThumbsUp className="h-4 w-4" />
           </button>
         </div>
+        <div className="flex items-center justify-center gap-4">
+          <TypographySmall>{commentsCount.toString()}</TypographySmall>
+          <Dialog onOpenChange={setCommentstate} open={commentState} >
+            <DialogTrigger asChild>
+            <button
+            className={classNames(
+              "flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-100 bg-transparent hover:bg-slate-100 hover:bg-opacity-10"
+            )}
+          >
+            <MessageSquare className="h-4 w-4" />
+          </button>
+          </DialogTrigger>
+            <DialogContent className="sm:max-w-[40rem] bg-[#0d1726]">
+              <DialogHeader>
+                <DialogTitle className="text-white">{status !== "unauthenticated" ? (<>New Comment</>) : (<>log in to comment</>)}</DialogTitle>
+              </DialogHeader>
+              {/* <NewTweet /> */}
+              <NewComment tweetId={id} updateComment={updatedComment} />
+            </DialogContent>
+          </Dialog>
+          
+        </div>
       </div>
     </div>
   );
 };
+
+
+
+
+
+
+
+"use client"
+
+
+
+
+
+// export function DialogTweet() {
+//   const { status } = useSession()
+//   return (
+    
+//   )
+// }
+

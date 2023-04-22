@@ -24,7 +24,8 @@ export const userRouter = createTRPCRouter({
                         tweet: {
                             include: {
                                 author: true,
-                                likedBy: true
+                                likedBy: true,
+                                comments: true,
                             }
                         },
                     },
@@ -35,7 +36,8 @@ export const userRouter = createTRPCRouter({
                 tweets: {
                     include: {
                         author: true,
-                        likedBy: true
+                        likedBy: true,
+                        comments: true,
                     },
                     orderBy: {
                         createdAt: "desc"

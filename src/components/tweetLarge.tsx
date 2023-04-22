@@ -1,9 +1,22 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog"
+import { NewComment } from "./NewComment";
 import { type RouterOutputs } from "~/utils/api"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import { TypographyP, TypographySmall, TypographySubtle } from "~/components/ui/typography";
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { ThumbsUp } from "lucide-react";
+import { MessageSquare, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
@@ -15,8 +28,8 @@ dayjs.extend(relativeTime)
 
 
 
-export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({content, createdAt, id, author, likedBy}) => {
-  const { data } = useSession()
+export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({content, createdAt, id, author, likedBy, comments}) => {
+  const { data, status } = useSession()
   const user = data?.user
   const [postLiked, setPostLiked] = useState<boolean>(() => {
     if (user === undefined) return false
@@ -29,6 +42,7 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
     return is_liked !== undefined ? true : false
   })
   const [likes, setLikes] = useState<number>(likedBy.length)
+  const [commentsCount, setComments] = useState<number>(comments.length);
   const likepost = api.tweet.likeTweet.useMutation({
     onSuccess: () => {
       setLikes((prev) => {
@@ -63,7 +77,12 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
   })
 
 
-
+  const updatedComment = () => {
+    setComments(prev => {
+      return prev + 1
+    })
+    // setCommentstate(false)
+  }
   return (<div className="w-full">
       <div className="flex items-center justify-start pl-3 gap-2 border-b-[.01rem] border-slate-700 p-3 pt-5">
       <Avatar>
@@ -111,6 +130,19 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
         }}
         ><ThumbsUp className="h-4 w-4" /></button>
         </div>
+        <div className="flex items-center justify-center gap-4">
+          <TypographySmall>{commentsCount.toString()}</TypographySmall>
+          <button
+            className={classNames(
+              "flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-100 bg-transparent"
+            )}
+          >
+            <MessageSquare className="h-4 w-4" />
+          </button>  
+        </div>
+      </div>
+      <div className="border-b-[.01rem] p-2 border-slate-700">
+        <NewComment tweetId={id} updateComment={updatedComment} />
       </div>
     </div>)
   }
