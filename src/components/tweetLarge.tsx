@@ -73,12 +73,10 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
             if (!postLiked) {
               likepost.mutate({
                 tweetId: id,
-                userId: user.id,
               })
             } else {
               unlikePost.mutate({
                 tweetId: id,
-                userId: user.id,
               })
             }
           }
