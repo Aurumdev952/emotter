@@ -3,13 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog"
 import { NewComment } from "./NewComment";
 import { type RouterOutputs } from "~/utils/api"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
@@ -22,7 +15,6 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { toast } from 'react-hot-toast'
 import classNames from "classnames";
-import Link from "next/link";
 import { UserLink } from "./UserProfileComp";
 
 dayjs.extend(relativeTime)

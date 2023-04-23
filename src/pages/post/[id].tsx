@@ -8,7 +8,7 @@ import Link from "next/link";
 import { CommentComp } from "~/components/CommentComp";
 import Layout from "~/components/Layout";
 import { TweetLarge } from "~/components/tweetLarge";
-import { TypographyH3, TypographyH4, TypographyP } from "~/components/ui/typography";
+import { TypographyH3, TypographyP } from "~/components/ui/typography";
 import { ssgHelper } from "~/server/api/helper";
 import { api } from "~/utils/api";
 
