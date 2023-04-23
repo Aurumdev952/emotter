@@ -23,6 +23,7 @@ import { useSession } from "next-auth/react";
 import { toast } from 'react-hot-toast'
 import classNames from "classnames";
 import Link from "next/link";
+import { UserLink } from "./UserProfileComp";
 
 dayjs.extend(relativeTime)
 
@@ -93,9 +94,10 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
       {/* <Link href className="text-sm font-medium leading-none">
           @{typeof author.name === "string" ? author.name : ''}
         </Link> */}
-      <Link href={`/user/${author.id}`}>
+      {/* <Link href={`/user/${author.id}`}>
         @{typeof author.name === "string" ? author.name : ''}
-      </Link>
+      </Link> */}
+      <UserLink {...author} />
 
       <TypographySubtle>
         {dayjs(createdAt).fromNow()}
