@@ -46,7 +46,12 @@ export const tweetRouter = createTRPCRouter({
         id: input,
       },
       include: {
-        author: true,
+        author: {
+          include: {
+            followers: true,
+            following: true
+          }
+        },
         likedBy: true,
         comments: true
       },
@@ -64,7 +69,12 @@ export const tweetRouter = createTRPCRouter({
       take: input.number,
       skip: input.offset,
       include: {
-        author: true,
+        author: {
+          include: {
+            followers: true,
+            following: true
+          }
+        },
         likedBy: true,
         comments: true,
       },
@@ -142,7 +152,12 @@ export const tweetRouter = createTRPCRouter({
           tweetId: input 
         },
         include: {
-          author: true
+          author: {
+            include: {
+              followers: true,
+              following: true
+            }
+          }
         },
         orderBy: {
           createdAt: "desc"

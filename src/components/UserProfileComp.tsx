@@ -1,4 +1,6 @@
-import { type RouterOutputs } from "~/utils/api";
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { api, type RouterOutputs } from "~/utils/api";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { useSession } from "next-auth/react";
 import { Button } from "./ui/button";
@@ -13,13 +15,51 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { TypographyH3, TypographyP } from "./ui/typography";
+import {
+  TypographyH3,
+  TypographyLead,
+  TypographyP,
+  TypographySmall,
+  TypographySubtle,
+} from "./ui/typography";
 import { type ColorElement } from "~/utils/colorTypes";
 
 export const UserProfileComp: React.FC<
   RouterOutputs["user"]["getUser"] & { color: ColorElement["hex"] }
-> = ({ id, email, image, name, bio, color }) => {
-  const { data } = useSession();
+> = ({ id, email, image, name, bio, color, following, followers }) => {
+  const { data, status } = useSession();
+  const [isFollower, setisFollowing] = useState<boolean>(() => {
+    if (status === "unauthenticated") return false;
+    if (data?.user.id === id) return false;
+    const f = followers.find((r) => r.followerId === data?.user.id);
+    if (!f) return false;
+    return true;
+  });
+  const [followerCount, setFollowers] = useState<number>(followers.length);
+
+  const follow = api.user.followUser.useMutation({
+    onSuccess: () => {
+      setisFollowing(true);
+      setFollowers((prev) => {
+        return prev + 1;
+      });
+    },
+    onError: () => {
+      toast.error("error has occured");
+    },
+  });
+  const unfollow = api.user.deleteFollow.useMutation({
+    onSuccess: () => {
+      setisFollowing(false);
+      setFollowers((prev) => {
+        return prev - 1;
+      });
+    },
+    onError: () => {
+      toast.error("error has occured");
+    },
+  });
+
   return (
     <div className="relative h-[23rem] w-full border-b-[.01rem] border-slate-700">
       <div
@@ -38,8 +78,35 @@ export const UserProfileComp: React.FC<
         </Avatar>
         <div className="absolute top-[10rem] flex w-full items-center justify-end gap-2 py-3 pr-5">
           {/* button here */}
-          <UserProfileMenu />
-          <Button className="rounded-3xl border-2 border-white">Follow</Button>
+          {!isFollower &&
+            status === "authenticated" &&
+            data?.user.id !== id && (
+              <>
+                <UserProfileMenu />
+                <Button
+                  onClick={() => {
+                    if (status === "authenticated") {
+                      follow.mutate(id);
+                    }
+                  }}
+                  className="rounded-3xl border-2 border-white"
+                >
+                  Follow
+                </Button>
+              </>
+            )}
+          {isFollower && (
+            <Button
+              onClick={() => {
+                if (status === "authenticated") {
+                  unfollow.mutate(id);
+                }
+              }}
+              className="rounded-3xl border-2 border-darkblue bg-white text-darkblue"
+            >
+              Following
+            </Button>
+          )}
         </div>
 
         <div className="absolute left-1 top-[12rem]">
@@ -47,6 +114,16 @@ export const UserProfileComp: React.FC<
         </div>
         <div className="absolute top-[16rem] w-[90%] pl-1">
           <TypographyP>{bio ?? ""}</TypographyP>
+        </div>
+        <div className="absolute left-4 top-[21rem] flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-1">
+            <TypographySmall>{following.length.toString()}</TypographySmall>
+            <TypographySubtle>Following</TypographySubtle>
+          </div>
+          <div className="flex items-center justify-center gap-1">
+            <TypographySmall>{followerCount.toString()}</TypographySmall>
+            <TypographySubtle>Followers</TypographySubtle>
+          </div>
         </div>
       </div>
     </div>
@@ -80,70 +157,83 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 export const UserLink: React.FC<{
-  image: string | null,
-  id: string,
-  name: string | null,
-  bio: string | null,
-}> = ({
-  image,
-  id,
-  bio,
-  name,
-}) => {
+  image: string | null;
+  id: string;
+  name: string | null;
+  bio: string | null;
+  followers: RouterOutputs["user"]["getUser"]["followers"];
+  following: RouterOutputs["user"]["getUser"]["following"];
+}> = ({ image, id, bio, name, followers, following }) => {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
         <Link
           href={`/user/${id}`}
-          className="text-sm font-medium leading-none hover:underline text-white"
+          className="text-sm font-medium leading-none text-white hover:underline"
         >
           @{typeof name === "string" ? name : ""}
         </Link>
         {/* <Button variant="link">@nextjs</Button> */}
       </HoverCardTrigger>
-      {bio && <HoverCardContent className="w-80 bg-darkblue">
-        <div className="flex justify-between space-x-4">
-          <Avatar>
-            <AvatarImage src={image ?? ""} />
-            <AvatarFallback>VC</AvatarFallback>
-          </Avatar>
-          <div className="space-y-1">
-            <h4 className="text-sm font-semibold">@{name}</h4>
-            <p className="text-sm">
-              {/* The React Framework – created and maintained by @vercel. */}
-              {bio ?? ""}
-            </p>
-            {/* <div className="flex items-center pt-2">
-              <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-              <span className="text-muted-foreground text-xs">
-                Joined December 2021
-              </span>
-            </div> */}
+      {bio && (
+        <HoverCardContent className="w-70 bg-darkblue">
+          <div className="flex justify-center space-x-4">
+            <Avatar>
+              <AvatarImage src={image ?? ""} />
+              <AvatarFallback>VC</AvatarFallback>
+            </Avatar>
+            <div className="space-y-1">
+              <h4 className="text-sm font-semibold">@{name}</h4>
+              <p className="text-sm">
+                {/* The React Framework – created and maintained by @vercel. */}
+                {bio ?? ""}
+              </p>
+              <div className="flex items-center pt-2 gap-3">
+                <div className="flex items-center justify-center gap-1">
+                  <TypographySmall>
+                    {following?.length.toString() ?? 0}
+                  </TypographySmall>
+                  <TypographySubtle>Following</TypographySubtle>
+                </div>
+                <div className="flex items-center justify-center gap-1">
+                  <TypographySmall>{followers?.length.toString() ?? 0}</TypographySmall>
+                  <TypographySubtle>Followers</TypographySubtle>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </HoverCardContent>}
-      {!bio && <HoverCardContent className="w-70 bg-darkblue">
-        <div className="flex justify-center space-x-4">
-          <Avatar>
-            <AvatarImage src={image ?? ""} />
-            <AvatarFallback>VC</AvatarFallback>
-          </Avatar>
-          <div className="space-y-1">
-            <h4 className="text-sm font-semibold">@{name}</h4>
-            {/* <div className="flex items-center pt-2">
-              <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
-              <span className="text-muted-foreground text-xs">
-                Joined December 2021
-              </span>
-            </div> */}
+        </HoverCardContent>
+      )}
+      {!bio && (
+        <HoverCardContent className="w-70 bg-darkblue">
+          <div className="flex justify-center space-x-4">
+            <Avatar>
+              <AvatarImage src={image ?? ""} />
+              <AvatarFallback>VC</AvatarFallback>
+            </Avatar>
+            <div className="space-y-1">
+              <h4 className="text-sm font-semibold">@{name}</h4>
+              <div className="flex items-center pt-2 gap-3">
+                <div className="flex items-center justify-center gap-1">
+                  <TypographySmall>
+                    {following?.length.toString() ?? 0}
+                  </TypographySmall>
+                  <TypographySubtle>Following</TypographySubtle>
+                </div>
+                <div className="flex items-center justify-center gap-1">
+                  <TypographySmall>{followers?.length.toString() ?? 0}</TypographySmall>
+                  <TypographySubtle>Followers</TypographySubtle>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </HoverCardContent>}
-      
+        </HoverCardContent>
+      )}
     </HoverCard>
   );
 };
