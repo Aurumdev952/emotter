@@ -9,6 +9,7 @@ import { TypographyP, TypographySubtle } from "~/components/ui/typography";
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Link from "next/link";
+import { UserLink } from "./UserProfileComp";
 
 dayjs.extend(relativeTime)
 
@@ -21,9 +22,10 @@ export const CommentComp: React.FC<RouterOutputs['tweet']["getCommentOnTweets"][
         <AvatarImage src={typeof author.image === "string" ? author.image : undefined} alt={typeof author.name === "string" ? author.name : undefined} />
         <AvatarFallback>{author.name}</AvatarFallback>
       </Avatar>
-      <Link href={`/user/${author.id}`} className="text-sm">
+      {/* <Link href={`/user/${author.id}`} className="text-sm">
         @{typeof author.name === "string" ? author.name : ''}
-      </Link>
+      </Link> */}
+      <UserLink {...author} />
 
       <TypographySubtle>
         {dayjs(createdAt).fromNow()}

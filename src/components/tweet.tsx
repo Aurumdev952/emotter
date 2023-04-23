@@ -27,6 +27,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import classNames from "classnames";
 import { toast } from "react-hot-toast";
+import { UserLink } from "./UserProfileComp";
 dayjs.extend(relativeTime);
 
 // TODO check if post is liked at the server because the post is not initially liked due to SSR😢
@@ -105,13 +106,14 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
           />
           <AvatarFallback>{author.name}</AvatarFallback>
         </Avatar>
+        <UserLink {...author} />
 
-        <Link
+        {/* <Link
           href={`/user/${author.id}`}
           className="text-sm font-medium leading-none"
         >
           @{typeof author.name === "string" ? author.name : ""}
-        </Link>
+        </Link> */}
 
         <TypographySubtle>{dayjs(createdAt).fromNow()}</TypographySubtle>
       </div>
@@ -181,17 +183,4 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
 
 
 
-
-"use client"
-
-
-
-
-
-// export function DialogTweet() {
-//   const { status } = useSession()
-//   return (
-    
-//   )
-// }
 
