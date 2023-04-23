@@ -50,7 +50,7 @@ const UserProfile: NextPage<{ id: string, color: ColorElement["hex"] }> = ({ id,
               <Loader2 className="mr-2 h-10 w-10 animate-spin" />
             </div>
           )}
-          {isError && (
+          {!user && isError && (
             <div className="flex h-full w-full flex-col items-center justify-start pt-16">
               <TypographyH3>Error has occured</TypographyH3>
             </div>

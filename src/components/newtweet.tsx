@@ -69,6 +69,7 @@ export const NewTweet: React.FC = () => {
           </div>
           <div className="grid w-full gap-2">
             <Textarea
+              maxLength={1000}
               placeholder="Type your post here"
               className="w-full"
               value={content}

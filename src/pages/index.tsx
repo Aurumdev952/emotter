@@ -65,7 +65,7 @@ const Home: NextPage = () => {
               <Loader2 className="mr-2 h-10 w-10 animate-spin" />
             </div>
           )}
-          {isError && (
+          {!tweets && isError && (
             <div className="flex h-full w-full flex-col items-center justify-start pt-16">
               <TypographyH3>Error has occured</TypographyH3>
             </div>

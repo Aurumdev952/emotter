@@ -43,7 +43,7 @@ const Post: NextPage<{ id: string }> = ({ id }) => {
                 <TweetLarge {...tweet} />
                 </div>}
               {isLoading && <div className="w-full h-full flex flex-col justify-start pt-20 items-center"><Loader2 className="mr-2 h-10 w-10 animate-spin" /></div>}
-              {isError && <div className="w-full h-full flex flex-col justify-start pt-16 items-center"><TypographyH3>Error has occured</TypographyH3></div>}
+              {!tweet && isError && <div className="w-full h-full flex flex-col justify-start pt-16 items-center"><TypographyH3>Error has occured</TypographyH3></div>}
               <div className="w-full border-b-[.01rem] border-slate-700">
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight py-4 pl-7">comments <span className="ml-1 h-6 w-6 text-md bg-slate-400 text-slate-800 rounded-full inline-block"><p className="w-full h-full flex justify-center items-center">{comments?.length.toString()}</p></span></h4>
               </div>

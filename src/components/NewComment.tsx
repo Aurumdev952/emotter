@@ -63,6 +63,8 @@ export const NewComment: React.FC<{
           </div>
           <div className="flex justify-center w-full gap-2">
             <Input
+              maxLength={500}
+              min={1}
               placeholder="comment on this post"
               className="w-full"
               value={content}

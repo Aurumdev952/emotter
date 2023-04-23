@@ -13,7 +13,7 @@ import {
 
 export const tweetInputProcedure = protectedProcedure.input(
   z.object({
-    content: z.string(),
+    content: z.string().max(1000).min(1)
     // authorId: z.string()
   })
 );
@@ -123,7 +123,7 @@ export const tweetRouter = createTRPCRouter({
     .input(
       z.object({
         tweetId: z.string(),
-        content: z.string().max(200).min(1),
+        content: z.string().max(500).min(1),
       })
     )
     .mutation(async ({ ctx, input }) => {
