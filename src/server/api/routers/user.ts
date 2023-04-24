@@ -83,8 +83,9 @@ export const userRouter = createTRPCRouter({
           followerId_followingId: {
             followerId: ctx.session.user.id,
             followingId: input,
-          },
+          }
         },
+        
       });
       return unfollow;
     }),
