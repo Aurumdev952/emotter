@@ -121,7 +121,7 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
               height={450}
               width={360}
               key={i}
-              className="rounded-md"
+              className="rounded-md w-[95%]"
               // placeholder="blur"
               />
             ))}

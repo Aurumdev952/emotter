@@ -109,7 +109,7 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
               height={360}
               width={640}
               key={i}
-              className="rounded-md"
+              className="rounded-md w-[95%]"
               priority
               // placeholder="blur"
               />

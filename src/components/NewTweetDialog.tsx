@@ -108,7 +108,7 @@ export function ImageDialog({ image, setImage }: {image: {
           </div>
         }
         {image && <div className="w-full flex flex-col justify-center items-center">
-          <Image src={image.image} alt="image preview" width={720} height={630} />
+          <Image src={image.image} alt="image preview" width={360} height={480} />
           </div>}
         {/* <DialogFooter>
           <Button type="submit">Save changes</Button>

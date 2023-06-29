@@ -102,7 +102,7 @@ export const NewTweet: React.FC = () => {
               {image && <div className="w-full">
             {<Image src={image.image} alt="image preview" width={100} height={80} />}
           </div>}
-            <Button className="bg-slate-300 text-[#0d1726]" type="submit">
+            <Button className="bg-slate-300 text-[#0d1726]" type="submit" disabled={isposting}>
               {isposting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

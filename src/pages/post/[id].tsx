@@ -48,7 +48,7 @@ const Post: NextPage<{ id: string }> = ({ id }) => {
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight py-4 pl-7">comments <span className="ml-1 h-6 w-6 text-md bg-slate-400 text-slate-800 rounded-full inline-block"><p className="w-full h-full flex justify-center items-center">{comments?.length.toString()}</p></span></h4>
               </div>
               {!!comments && <div className="w-full flex flex-col justify-start gap-2">
-                {comments?.length > 0 ? <>{comments?.map((comment, key) => (<CommentComp key={key} {...comment} />))}</> : <div className="w-full h-full pl-[16rem] pt-4 flex flex-col justify-center items-center"><TypographyP>no comments yet</TypographyP></div>}
+                {comments?.length > 0 ? <>{comments?.map((comment, key) => (<CommentComp key={key} {...comment} />))}</> : <div className="w-full h-full pt-4 flex justify-center"><p className="leading-7">no comments yet</p></div>}
                 </div>}
             </div>
           </div>
