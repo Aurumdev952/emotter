@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   push:
-    branches: [ main ]
+    branches: [main]
 
 env:
   DATABASE_URL: "https://fake.com"
@@ -16,6 +16,10 @@ env:
   GITHUB_CLIENT_SECRET: "sasasa"
   GOOGLE_CLIENT_ID: "swswswq"
   GOOGLE_CLIENT_SECRET: "swswswq"
+  CLOUDINARY_CLOUD_NAME: "dewdwedwd"
+  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: "dewdwedwd"
+  CLOUDINARY_API_KEY: "dewdwedwd"
+  CLOUDINARY_API_SECRET: "dewdwedwd"
 
 jobs:
   build:
