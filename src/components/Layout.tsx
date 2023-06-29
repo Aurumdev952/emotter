@@ -12,7 +12,7 @@ interface LayoutProps {
 const Layout: NextPage<LayoutProps> = ({ children }) => {
     return <>
      <main className="container bg-[#0d1726]">
-        <div className="menu border-r-[.01rem] border-slate-700 flex flex-col justify-start items-center py-10 gap-5">
+        <div className="menu hidden lg:flex border-r-[.01rem] border-slate-700 flex-col justify-start items-center py-10 gap-5">
             <LinkButton link="/"><HomeIcon className="h-4 w-5 mr-2" /> home</LinkButton>
             <Button className="hover:text-[#0d1726] w-[10rem] flex justify-start pl-6"><BellIcon className="h-4 w-5 mr-2" /> notifications</Button>
             <Button className="hover:text-[#0d1726] w-[10rem] flex justify-start pl-6"><EnvelopeIcon className="h-4 w-5 mr-2" /> messages</Button>
@@ -22,7 +22,7 @@ const Layout: NextPage<LayoutProps> = ({ children }) => {
         <div className="feed border-x-[.01rem] border-slate-700 px-2 flex flex-col justify-start gap-2 relative">
             {children}
         </div>
-        <div className="sidebar border-l-[.01rem] border-slate-700"></div>
+        <div className="sidebar hidden lg:flex border-l-[.01rem] border-slate-700"></div>
       </main>
     </>
 }

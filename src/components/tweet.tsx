@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog"
+} from "~/components/ui/dialog";
 import { NewComment } from "./NewComment";
 import { type RouterOutputs } from "~/utils/api";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -28,6 +28,8 @@ import Link from "next/link";
 import classNames from "classnames";
 import { toast } from "react-hot-toast";
 import { UserLink } from "./UserProfileComp";
+import { CldImage } from "next-cloudinary";
+import Image from "next/image";
 dayjs.extend(relativeTime);
 
 // TODO check if post is liked at the server because the post is not initially liked due to SSR😢
@@ -39,6 +41,7 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
   author,
   likedBy,
   comments,
+  images,
 }) => {
   const { data, status } = useSession();
   const user = data?.user;
@@ -54,7 +57,7 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
   });
   const [likes, setLikes] = useState<number>(likedBy.length);
   const [commentsCount, setComments] = useState<number>(comments.length);
-  const [commentState, setCommentstate] = useState<boolean>(false)
+  const [commentState, setCommentstate] = useState<boolean>(false);
   const likepost = api.tweet.likeTweet.useMutation({
     onSuccess: () => {
       setLikes((prev) => {
@@ -63,7 +66,7 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
       setPostLiked(true);
       toast.success("Success liking");
     },
-    onError: ({ }) => {
+    onError: ({}) => {
       // setLikes((prev) => {
       //   return prev - 1
       // })
@@ -88,13 +91,11 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
   });
 
   const updatedComment = () => {
-    setComments(prev => {
-      return prev + 1
-    })
-    setCommentstate(false)
-  }
-
-
+    setComments((prev) => {
+      return prev + 1;
+    });
+    setCommentstate(false);
+  };
 
   return (
     <div className="w-full rounded-md border-[.1rem] border-slate-300 p-2">
@@ -107,18 +108,25 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
           <AvatarFallback>{author.name}</AvatarFallback>
         </Avatar>
         <UserLink {...author} />
-
-        {/* <Link
-          href={`/user/${author.id}`}
-          className="text-sm font-medium leading-none"
-        >
-          @{typeof author.name === "string" ? author.name : ""}
-        </Link> */}
-
         <TypographySubtle>{dayjs(createdAt).fromNow()}</TypographySubtle>
       </div>
       <Link href={`/post/${id}`} className="p-5">
         <TypographyP>{content}</TypographyP>
+        {images.length > 0 && (
+          <div className="mt-2 flex flex-col justify-center items-center">
+            {images.map((image, i) => (
+              <Image
+              src={image.url}
+              alt="image"
+              height={450}
+              width={360}
+              key={i}
+              className="rounded-md w-[95%]"
+              // placeholder="blur"
+              />
+            ))}
+          </div>
+        )}
       </Link>
       <div className="grid grid-cols-2 grid-rows-1 border-t-[.01rem] border-slate-700 p-2">
         <div className="flex items-center justify-center gap-4">
@@ -153,34 +161,32 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
         </div>
         <div className="flex items-center justify-center gap-4">
           <TypographySmall>{commentsCount.toString()}</TypographySmall>
-          <Dialog onOpenChange={setCommentstate} open={commentState} >
+          <Dialog onOpenChange={setCommentstate} open={commentState}>
             <DialogTrigger asChild>
-            <button
-            className={classNames(
-              "flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-100 bg-transparent hover:bg-slate-100 hover:bg-opacity-10"
-            )}
-          >
-            <MessageSquare className="h-4 w-4" />
-          </button>
-          </DialogTrigger>
-            <DialogContent className="sm:max-w-[40rem] bg-[#0d1726]">
+              <button
+                className={classNames(
+                  "flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-colors duration-100 hover:bg-slate-100 hover:bg-opacity-10"
+                )}
+              >
+                <MessageSquare className="h-4 w-4" />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="bg-[#0d1726] sm:max-w-[40rem]">
               <DialogHeader>
-                <DialogTitle className="text-white">{status !== "unauthenticated" ? (<>New Comment</>) : (<>log in to comment</>)}</DialogTitle>
+                <DialogTitle className="text-white">
+                  {status !== "unauthenticated" ? (
+                    <>New Comment</>
+                  ) : (
+                    <>log in to comment</>
+                  )}
+                </DialogTitle>
               </DialogHeader>
               {/* <NewTweet /> */}
               <NewComment tweetId={id} updateComment={updatedComment} />
             </DialogContent>
           </Dialog>
-          
         </div>
       </div>
     </div>
   );
 };
-
-
-
-
-
-
-

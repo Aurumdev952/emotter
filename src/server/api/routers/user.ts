@@ -30,6 +30,7 @@ export const userRouter = createTRPCRouter({
                 },
                 likedBy: true,
                 comments: true,
+                images: true
               },
             },
           },
@@ -47,6 +48,7 @@ export const userRouter = createTRPCRouter({
             },
             likedBy: true,
             comments: true,
+            images: true
           },
           orderBy: {
             createdAt: "desc",

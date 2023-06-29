@@ -1,3 +1,4 @@
 {
-    "dotenv.enableAutocloaking": false
+    "dotenv.enableAutocloaking": false,
+    "vercel-vscode.project": "prj_bwFL5slBrchuJ3n7idLhyzEiSoF4"
 }

@@ -16,12 +16,13 @@ import { useSession } from "next-auth/react";
 import { toast } from 'react-hot-toast'
 import classNames from "classnames";
 import { UserLink } from "./UserProfileComp";
+import Image from "next/image";
 
 dayjs.extend(relativeTime)
 
 
 
-export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({content, createdAt, id, author, likedBy, comments}) => {
+export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = ({content, createdAt, id, author, likedBy, comments, images}) => {
   const { data, status } = useSession()
   const user = data?.user
   const [postLiked, setPostLiked] = useState<boolean>(() => {
@@ -99,6 +100,22 @@ export const TweetLarge: React.FC<RouterOutputs['tweet']['getAllTweets'][0]> = (
         <TypographyP>
             {content}
         </TypographyP>
+        {images.length > 0 && (
+          <div className="mt-2">
+            {images.map((image, i) => (
+              <Image
+              src={image.url}
+              alt="image"
+              height={360}
+              width={640}
+              key={i}
+              className="rounded-md w-[95%]"
+              priority
+              // placeholder="blur"
+              />
+            ))}
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-2 grid-rows-1 border-y-[.01rem] p-2 border-slate-700">
         <div className="flex justify-center items-center gap-4">
