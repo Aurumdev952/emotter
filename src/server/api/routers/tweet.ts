@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { TRPCError } from "@trpc/server";
+import axios from "axios";
+import { type UploadApiResponse } from "cloudinary";
 import { z } from "zod";
 
 import {
@@ -13,7 +15,8 @@ import {
 
 export const tweetInputProcedure = protectedProcedure.input(
   z.object({
-    content: z.string().max(1000).min(1)
+    content: z.string().max(1000).min(1),
+    image: z.string().optional(),
     // authorId: z.string()
   })
 );
@@ -49,11 +52,12 @@ export const tweetRouter = createTRPCRouter({
         author: {
           include: {
             followers: true,
-            following: true
-          }
+            following: true,
+          },
         },
         likedBy: true,
-        comments: true
+        comments: true,
+        images: true
       },
     });
     if (tweet === null) {
@@ -72,11 +76,12 @@ export const tweetRouter = createTRPCRouter({
         author: {
           include: {
             followers: true,
-            following: true
-          }
+            following: true,
+          },
         },
         likedBy: true,
         comments: true,
+        images: true
       },
       orderBy: {
         createdAt: "desc",
@@ -91,6 +96,31 @@ export const tweetRouter = createTRPCRouter({
         content: input.content,
       },
     });
+    if (input.image) {
+      try {
+        const r = await axios.post("http://localhost:3000/api/upload/images", {
+          file: input.image,
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          }
+        });
+        const results = (await r.data) as UploadApiResponse;
+        await ctx.prisma.tweetImage.create({
+          data: {
+            publicId: results.public_id,
+            url: results.secure_url,
+            tweetId: tweet.id
+          }
+        })
+      } catch (error) {
+        console.log(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+    } 
     return tweet;
   }),
   likeTweet: protectedProcedure
@@ -141,29 +171,31 @@ export const tweetRouter = createTRPCRouter({
         data: {
           content: input.content,
           tweetId: input.tweetId,
-          authorId: ctx.session.user.id
-        }
-      })
-      return comment
+          authorId: ctx.session.user.id,
+        },
+      });
+      return comment;
     }),
-    getCommentOnTweets: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
+  getCommentOnTweets: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
       const comments = await ctx.prisma.comment.findMany({
         where: {
-          tweetId: input 
+          tweetId: input,
         },
         include: {
           author: {
             include: {
               followers: true,
-              following: true
-            }
-          }
+              following: true,
+            },
+          },
         },
         orderBy: {
-          createdAt: "desc"
-        }
-      })
+          createdAt: "desc",
+        },
+      });
 
-      return comments
-    })
+      return comments;
+    }),
 });

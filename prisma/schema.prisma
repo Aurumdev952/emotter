@@ -83,6 +83,7 @@ model Tweet {
     authorId String
     likedBy UserOnTweet[]
     comments Comment[]
+    images TweetImage[]
     author User @relation(name: "tweet", fields: [authorId], references: [id])
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -98,20 +99,21 @@ model UserOnTweet {
   tweet   Tweet @relation(fields: [tweetId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@id([userId, tweetId])
   @@index([tweetId])
   @@index([userId])
 }
 
 
+
 model Comment {
-    id String @default(cuid()) 
+    id String @default(cuid())  @unique
     tweetId String
     authorId String
     tweet Tweet @relation(fields: [tweetId], references: [id])
     author User @relation(fields: [authorId], references: [id])
     content String
+    images CommentImage[]
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -131,4 +133,24 @@ model Follows {
   @@unique([followerId, followingId])
   @@index([followingId])
   @@index([followerId])
+}
+
+
+model CommentImage {
+    id String @default(cuid())
+    commentId String
+    comment Comment @relation(fields: [commentId], references: [id])
+    publicId String
+    url String
+    @@id([id, commentId])
+    @@index([commentId])
+}
+model TweetImage {
+    id String @default(cuid())
+    tweetId String
+    tweet Tweet @relation(fields: [tweetId], references: [id])
+    publicId String
+    url String
+    @@id([id, tweetId])
+    @@index([tweetId])
 }

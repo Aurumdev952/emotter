@@ -1,6 +1,5 @@
 import { TypographySmall } from "~/components/ui/typography";
 import { Textarea } from "~/components/ui/textarea";
-import { type Session } from "next-auth";
 import { signOut, useSession  } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -8,6 +7,8 @@ import { Loader2, LogOut } from "lucide-react";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import { toast } from 'react-hot-toast'
+import Image from "next/image"
+import { ImageDialog } from "./NewTweetDialog";
 
 export const NewTweet: React.FC = () => {
   const { data, status } = useSession()
@@ -15,30 +16,50 @@ export const NewTweet: React.FC = () => {
   const utils = api.useContext();
   const [content, setContent] = useState<string>("");
   const [isposting, setIsposting] = useState<boolean>(false);
+  const [image, setImage] = useState<{
+    image: string,
+    file: File
+  } | undefined>()
   const newtweet = api.tweet.createTweet.useMutation({
     onSuccess: async () => {
       await utils.tweet.getAllTweets.refetch();
       setIsposting(false);
       setContent("");
+      setImage(undefined)
       toast.success("post success")
     },
     onError: () => {
+      setIsposting(false)
       toast.error("error posting")
     }
   });
-
+  const readData = (f: File) =>
+    new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.readAsDataURL(f)
+  })
   if (status === "authenticated") {
     const user = data.user
     return (
       <form
         className="flex w-full items-center gap-5 bg-[#0d1726]"
-        onSubmit={(e) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onSubmit={async (e) => {
           e.preventDefault();
-          if (content !== "") {
+          if (isposting) return false
+          if (content !== "" || image !== undefined) {
             setIsposting(true);
-            newtweet.mutate({
+            const data: {
+              content: string,
+              image?: string
+            } = {
               content: content,
-            });
+            } 
+            if (image) {
+              data.image = await readData(image?.file) as string
+            }
+            newtweet.mutate(data);
           }
         }}
       >
@@ -62,10 +83,11 @@ export const NewTweet: React.FC = () => {
           </Button>
         </div>
         <div className="flex w-full flex-col justify-start gap-1">
-          <div>
+          <div className="flex justify-between items-center">
             <TypographySmall>
               @{typeof user.name === "string" ? user.name : ""}
             </TypographySmall>
+            <ImageDialog image={image} setImage={setImage} />
           </div>
           <div className="grid w-full gap-2">
             <Textarea
@@ -77,6 +99,9 @@ export const NewTweet: React.FC = () => {
               spellCheck={false}
               autoComplete="off"
             />
+              {image && <div className="w-full">
+            {<Image src={image.image} alt="image preview" width={100} height={80} />}
+          </div>}
             <Button className="bg-slate-300 text-[#0d1726]" type="submit">
               {isposting ? (
                 <>
@@ -88,6 +113,7 @@ export const NewTweet: React.FC = () => {
               )}
             </Button>
           </div>
+        
         </div>
       </form>
     );
