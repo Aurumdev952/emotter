@@ -35,6 +35,7 @@ const Home: NextPage = () => {
         <title>Emotter</title>
         <meta name="description" content="Share what you think!" />
         <link rel="icon" href="/emotter.svg" />
+        <script defer data-domain="emotter-two.vercel.app" src="https://plausible.io/js/script.js"></script>
       </Head>
       <Layout>
         <div className="glass absolute left-0 top-0 z-10 h-10 w-full pl-4 pt-1">
