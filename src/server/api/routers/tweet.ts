@@ -98,7 +98,7 @@ export const tweetRouter = createTRPCRouter({
     });
     if (input.image) {
       try {
-        const r = await axios.post("http://localhost:3000/api/upload/images", {
+        const r = await axios.post(`${process.env.VERCEL_URL ?? "http://localhost:3000"}/api/upload/images`, {
           file: input.image,
         }, {
           headers: {
