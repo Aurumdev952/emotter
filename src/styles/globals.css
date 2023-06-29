@@ -13,7 +13,7 @@
       "menu feed sidebar"
       "menu feed sidebar"
       "menu feed sidebar";
-    width: 100%;
+    max-width: 100% !important;
     height: 100vh;
   }
   
