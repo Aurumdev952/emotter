@@ -16,6 +16,9 @@ env:
   GITHUB_CLIENT_SECRET: "sasasa"
   GOOGLE_CLIENT_ID: "swswswq"
   GOOGLE_CLIENT_SECRET: "swswswq"
+  CLOUDINARY_CLOUD_NAME: "Required"
+  CLOUDINARY_API_KEY: "Required"
+  CLOUDINARY_API_SECRET: "Required"
 
 jobs:
   build:
