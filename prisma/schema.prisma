@@ -3,6 +3,7 @@
 
 generator client {
     provider = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
@@ -14,6 +15,7 @@ datasource db {
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
     relationMode = "prisma"
+
 }
 
 model Example {
@@ -84,7 +86,7 @@ model Tweet {
     likedBy UserOnTweet[]
     comments Comment[]
     images TweetImage[]
-    author User @relation(name: "tweet", fields: [authorId], references: [id])
+    author User @relation(name: "tweet", fields: [authorId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -93,10 +95,10 @@ model Tweet {
 }
 
 model UserOnTweet {
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String // relation scalar field (used in the `@relation` attribute above)
   tweetId String // relation scalar field (used in the `@relation` attribute above)
-  tweet   Tweet @relation(fields: [tweetId], references: [id])
+  tweet   Tweet @relation(fields: [tweetId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@id([userId, tweetId])
@@ -110,8 +112,8 @@ model Comment {
     id String @default(cuid())  @unique
     tweetId String
     authorId String
-    tweet Tweet @relation(fields: [tweetId], references: [id])
-    author User @relation(fields: [authorId], references: [id])
+    tweet Tweet @relation(fields: [tweetId], references: [id], onDelete: Cascade)
+    author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
     content String
     images CommentImage[]
     createdAt DateTime @default(now())
@@ -125,9 +127,9 @@ model Comment {
 
 model Follows {
   id String @id @default(cuid())
-  follower    User @relation("following", fields: [followerId], references: [id])
+  follower    User @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
   followerId  String
-  following   User @relation("follower", fields: [followingId], references: [id])
+  following   User @relation("follower", fields: [followingId], references: [id], onDelete: Cascade)
   followingId String
 
   @@unique([followerId, followingId])
@@ -139,7 +141,7 @@ model Follows {
 model CommentImage {
     id String @default(cuid())
     commentId String
-    comment Comment @relation(fields: [commentId], references: [id])
+    comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
     publicId String
     url String
     @@id([id, commentId])
@@ -148,7 +150,7 @@ model CommentImage {
 model TweetImage {
     id String @default(cuid())
     tweetId String
-    tweet Tweet @relation(fields: [tweetId], references: [id])
+    tweet Tweet @relation(fields: [tweetId], references: [id], onDelete: Cascade)
     publicId String
     url String
     @@id([id, tweetId])

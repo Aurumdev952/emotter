@@ -5,6 +5,7 @@ import { ArrowBigLeftIcon, Loader2 } from "lucide-react";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CommentComp } from "~/components/CommentComp";
 import Layout from "~/components/Layout";
 import { TweetLarge } from "~/components/tweetLarge";
@@ -19,6 +20,7 @@ const Post: NextPage<{ id: string }> = ({ id }) => {
     const postId: string = id !== undefined && typeof id === "string" ? id : ""; 
     const { data: tweet, isLoading, isError } = api.tweet.getTweet.useQuery(postId);
     const { data: comments } = api.tweet.getCommentOnTweets.useQuery(postId);
+    const router = useRouter()
     return (
     <>
       <Head>
@@ -29,12 +31,12 @@ const Post: NextPage<{ id: string }> = ({ id }) => {
       <Layout>
 
           <div className="glass absolute left-0 top-0 z-10 flex h-10 w-full items-center justify-start gap-3 pl-4 pt-1">
-            <Link
-              href="/"
+            <button
+              onClick={() => router.back()}
               className="flex h-8 w-8 items-center justify-center rounded-full p-2 hover:bg-slate-100 hover:text-darkblue"
             >
               <ArrowBigLeftIcon />
-            </Link>
+            </button>
             <p className="leading-7">Post</p>
           </div>
           <div className="h-full w-full overflow-y-scroll scrollbar scrollbar-track-transparent scrollbar-thumb-slate-400 scrollbar-thumb-rounded-md scrollbar-w-1 pt-10 pb-2">

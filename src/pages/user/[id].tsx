@@ -17,10 +17,12 @@ import { ssgHelper } from "~/server/api/helper";
 import { type RouterOutputs, api } from "~/utils/api";
 import { Tweet } from "~/components/tweet";
 import { type Color, type ColorElement } from "~/utils/colorTypes";
+import { useRouter } from "next/navigation";
 
 const UserProfile: NextPage<{ id: string, color: ColorElement["hex"] }> = ({ id, color }) => {
   const userId: string = id !== undefined && typeof id === "string" ? id : "";
   const { data: user, isLoading, isError } = api.user.getUser.useQuery(userId);
+  const router = useRouter()
   return (
     <>
       <Head>
@@ -30,12 +32,12 @@ const UserProfile: NextPage<{ id: string, color: ColorElement["hex"] }> = ({ id,
       </Head>
       <Layout>
         <div className="glass absolute left-0 top-0 z-10 flex h-10 w-full items-center justify-start gap-3 pl-4 pt-1">
-          <Link
-            href="/"
+          <button
+            onClick={() => router.back()}
             className="flex h-8 w-8 items-center justify-center rounded-full p-2 hover:bg-slate-100 hover:text-darkblue"
           >
             <ArrowBigLeftIcon />
-          </Link>
+          </button>
           <p className="leading-7">Post</p>
         </div>
         <div className="h-full w-full overflow-y-scroll pt-10 scrollbar scrollbar-track-transparent scrollbar-thumb-slate-400 scrollbar-thumb-rounded-md scrollbar-w-1">
