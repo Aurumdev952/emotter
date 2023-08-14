@@ -4,8 +4,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { env } from "~/env.mjs";
 import { getServerAuthSession } from "~/server/auth";
 
-import Cors from 'cors'
-
+import Cors from "cors";
 
 // Initializing the cors middleware
 // You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
@@ -22,17 +21,20 @@ function runMiddleware(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
-        return reject(result)
+        return reject(result);
       }
 
-      return resolve(result)
-    })
-  })
+      return resolve(result);
+    });
+  });
 }
 
-type Upload = {
-  file: string;
-} | null | undefined;
+type Upload =
+  | {
+      file: string;
+    }
+  | null
+  | undefined;
 
 export default async function handler(
   req: NextApiRequest,
@@ -48,10 +50,10 @@ export default async function handler(
   //   })
   // }
   const cors = Cors({
-    methods: ['POST', 'DELETE']
-  })
-  await runMiddleware(req, res, cors)
-  const { method } = req
+    methods: ["POST", "DELETE"],
+  });
+  await runMiddleware(req, res, cors);
+  const { method } = req;
   switch (method) {
     case "POST":
       try {
@@ -64,7 +66,7 @@ export default async function handler(
             api_secret: env.CLOUDINARY_API_SECRET,
           });
           const result = await cloudinary.uploader.upload(image.file, {
-            upload_preset: "emotter_preset"
+            upload_preset: "emotter_preset",
           });
           res.status(200).json(result);
         } else {
@@ -75,14 +77,14 @@ export default async function handler(
       } catch (error) {
         console.log(error);
         res.status(500).json({
-          error: error
-        })
+          error: error,
+        });
       }
       break;
     case "DELETE":
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const image = req.body as Upload
+        const image = req.body as Upload;
         if (image) {
           cloudinary.config({
             cloud_name: env.CLOUDINARY_CLOUD_NAME,
@@ -90,12 +92,14 @@ export default async function handler(
             api_secret: env.CLOUDINARY_API_SECRET,
           });
 
-          cloudinary.uploader.destroy(image.file)
+          cloudinary.uploader
+            .destroy(image.file)
             .then((data) => {
-            res.status(200).json(data);
-          }).catch((err) => {
-            res.status(500).json(err);
-          })
+              res.status(200).json(data);
+            })
+            .catch((err) => {
+              res.status(500).json(err);
+            });
         } else {
           res.status(404).json({
             error: "Bad request",
@@ -104,16 +108,14 @@ export default async function handler(
       } catch (error) {
         console.log(error);
         res.status(500).json({
-          error: error
-        })
+          error: error,
+        });
       }
       break;
     default:
       res.status(403).json({
-        error: "Http method not supported"
-      })
+        error: "Http method not supported",
+      });
       break;
   }
 }
-
-

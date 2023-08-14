@@ -57,7 +57,7 @@ export const tweetRouter = createTRPCRouter({
         },
         likedBy: true,
         comments: true,
-        images: true
+        images: true,
       },
     });
     if (tweet === null) {
@@ -81,7 +81,7 @@ export const tweetRouter = createTRPCRouter({
         },
         likedBy: true,
         comments: true,
-        images: true
+        images: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -98,29 +98,35 @@ export const tweetRouter = createTRPCRouter({
     });
     if (input.image) {
       try {
-        const r = await axios.post(`https:/${process.env.VERCEL_URL ?? "http://localhost:3000"}/api/upload/images`, {
-          file: input.image,
-        }, {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
+        const r = await axios.post(
+          process.env.VERCEL_URL === undefined
+            ? `http://localhost:3000/api/upload/images`
+            : `http://${process.env.VERCEL_URL}/upload/images`,
+          {
+            file: input.image,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
           }
-        });
+        );
         const results = (await r.data) as UploadApiResponse;
         await ctx.prisma.tweetImage.create({
           data: {
             publicId: results.public_id,
             url: results.secure_url,
-            tweetId: tweet.id
-          }
-        })
+            tweetId: tweet.id,
+          },
+        });
       } catch (error) {
         console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-    } 
+    }
     return tweet;
   }),
   likeTweet: protectedProcedure

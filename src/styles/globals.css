@@ -5,55 +5,32 @@
 @layer components {
   .container {
     display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 0.6fr 1.4fr 1fr;
-    /* gap: 12px 9px; */
-    grid-auto-flow: row;
+    grid-template-columns: 0.9fr 1.3fr 0.8fr;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0px 0px;
     grid-template-areas:
-      "feed"
-      "feed"
-      "feed";
-    max-width: 100% !important;
-    height: 100vh;
-  }
-  @screen lg {
-    .container {
-      display: grid;
-    grid-template-columns: 0.6fr 1.2fr 0.8fr;
-    grid-template-rows: 0.6fr 1.4fr 1fr;
-    gap: 12px 9px;
-    grid-auto-flow: row;
-    grid-template-areas:
-      "menu feed sidebar"
-      "menu feed sidebar"
-      "menu feed sidebar";
-    max-width: 100% !important;
-    height: 100vh;
-    }
-  }
-  .menu {
-    grid-area: menu;
+      "sidebar main sidebar2"
+      "sidebar main sidebar2"
+      "sidebar main sidebar2";
+    width: 100%;
   }
 
-  .feed {
-    display: grid;
-    grid-template-columns: repeat(2, 1.2fr) 0.8fr;
-    grid-template-rows: 0.4fr 1.6fr 1fr;
-    gap: 2px 0px;
-    grid-auto-flow: row;
-    grid-template-areas:
-      "title title title"
-      ". . ."
-      ". . .";
-    grid-area: feed;
-  }
-
-  .title {
-    grid-area: title;
+  .main {
+    grid-area: main;
   }
 
   .sidebar {
     grid-area: sidebar;
+    position: fixed;
+    top: 2.5rem;
+    left: 0;
+  }
+
+  .sidebar2 {
+    grid-area: sidebar2;
+    position: fixed;
+    top: 2.5rem;
+    right: 0;
   }
 
   .glass {
