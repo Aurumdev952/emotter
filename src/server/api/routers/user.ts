@@ -80,14 +80,19 @@ export const userRouter = createTRPCRouter({
   deleteFollow: protectedProcedure
     .input(z.string())
     .mutation(async ({ input, ctx }) => {
+      const user = await ctx.prisma.follows.findFirst({
+        where: {
+          followerId: ctx.session.user.id,
+          followingId: input,
+        },
+        select: {
+          id: true
+        }
+      })
       const unfollow = await ctx.prisma.follows.delete({
         where: {
-          followerId_followingId: {
-            followerId: ctx.session.user.id,
-            followingId: input,
-          }
+          id: user?.id ?? ""
         },
-        
       });
       return unfollow;
     }),

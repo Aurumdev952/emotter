@@ -21,7 +21,7 @@ import {
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MessageSquare, ThumbsUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -30,6 +30,7 @@ import { toast } from "react-hot-toast";
 import { UserLink } from "./UserProfileComp";
 import { CldImage } from "next-cloudinary";
 import Image from "next/image";
+
 dayjs.extend(relativeTime);
 
 // TODO check if post is liked at the server because the post is not initially liked due to SSR😢
@@ -45,16 +46,7 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
 }) => {
   const { data, status } = useSession();
   const user = data?.user;
-  const [postLiked, setPostLiked] = useState<boolean>(() => {
-    if (user === undefined) return false;
-    const is_liked = likedBy.find((like) => like.userId === user.id);
-    // likedBy.forEach(like => {
-    //   if (like.userId === user.id) {
-    //     is_liked = true
-    //   }
-    // })
-    return is_liked !== undefined ? true : false;
-  });
+  const [postLiked, setPostLiked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(likedBy.length);
   const [commentsCount, setComments] = useState<number>(comments.length);
   const [commentState, setCommentstate] = useState<boolean>(false);
@@ -96,7 +88,12 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
     });
     setCommentstate(false);
   };
-
+  useEffect(() => {
+    if (user !== undefined) {
+      const is_liked = likedBy.find((like) => like.userId === user.id);
+      setPostLiked(is_liked !== undefined ? true : false)
+    }
+  }, [])
   return (
     <div className="w-full rounded-md border-[.1rem] border-slate-300 p-2">
       <div className="flex items-center justify-start gap-2 border-b-[.01rem] border-slate-700 p-3 pl-3 pt-0">

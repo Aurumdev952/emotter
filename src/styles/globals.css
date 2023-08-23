@@ -13,6 +13,18 @@
       "sidebar main sidebar2"
       "sidebar main sidebar2";
     width: 100%;
+    min-height: 100%;
+  }
+  .container_message {
+    display: grid;
+    grid-template-columns: 0.9fr 1.3fr 0.8fr;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0px 0px;
+    grid-template-areas:
+      "sidebar main main"
+      "sidebar main main"
+      "sidebar main main";
+    width: 100%;
   }
 
   .main {

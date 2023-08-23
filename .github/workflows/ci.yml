@@ -19,6 +19,11 @@ env:
   CLOUDINARY_CLOUD_NAME: "Required"
   CLOUDINARY_API_KEY: "Required"
   CLOUDINARY_API_SECRET: "Required"
+  PUSHER_APP_SECRET: "dewd"
+  NEXT_PUBLIC_PUSHER_APP_KEY: "wedewd"
+  UPSTASH_REDIS_REST_TOKEN: "ewdw"
+  UPSTASH_REDIS_REST_URL: "dwedwe"
+  PUSHER_APP_ID: "edwdw"
 
 jobs:
   build:

@@ -49,8 +49,8 @@ const Home: NextPage = () => {
             <div className="flex w-full flex-col justify-start gap-2 pb-2">
               {tweets.length > 0 ? (
                 <>
-                  {tweets?.map((tweet, key) => (
-                    <Tweet {...tweet} key={key} />
+                  {tweets?.map((tweet) => (
+                    <Tweet {...tweet} key={tweet.id} />
                   ))}
                 </>
               ) : (
