@@ -28,13 +28,7 @@ export const UserProfileComp: React.FC<
   RouterOutputs["user"]["getUser"] & { color: ColorElement["hex"] }
 > = ({ id, email, image, name, bio, color, following, followers }) => {
   const { data, status } = useSession();
-  const [isFollower, setisFollowing] = useState<boolean>(() => {
-    if (status === "unauthenticated") return false;
-    if (data?.user.id === id) return false;
-    const f = followers.find((r) => r.followerId === data?.user.id);
-    if (!f) return false;
-    return true;
-  });
+  const [isFollower, setisFollowing] = useState<boolean>(false);
   const [followerCount, setFollowers] = useState<number>(followers.length);
 
   const follow = api.user.followUser.useMutation({
@@ -60,6 +54,16 @@ export const UserProfileComp: React.FC<
     },
   });
 
+  useEffect(() => {
+    if (status === "authenticated") {
+      if (data?.user.id !== id) {
+        const f = followers.find((r) => r.followerId === data?.user.id);
+        if (f) {
+          setisFollowing(true);
+        }
+      }
+    }
+  }, [status]);
   return (
     <div className="relative h-[23rem] w-full border-b-[.01rem] border-slate-700">
       <div
@@ -106,6 +110,9 @@ export const UserProfileComp: React.FC<
             >
               Following
             </Button>
+          )}
+          {status === "authenticated" && data?.user.id === id && (
+            <EditProfileDialog />
           )}
         </div>
 
@@ -157,9 +164,10 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "~/components/ui/hover-card";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+import { EditProfileDialog } from "./EditProfileDialog";
 
 export const UserLink: React.FC<{
   image: string | null;
@@ -193,7 +201,7 @@ export const UserLink: React.FC<{
                 {/* The React Framework – created and maintained by @vercel. */}
                 {bio ?? ""}
               </p>
-              <div className="flex items-center pt-2 gap-3">
+              <div className="flex items-center gap-3 pt-2">
                 <div className="flex items-center justify-center gap-1">
                   <TypographySmall>
                     {following?.length.toString() ?? 0}
@@ -201,7 +209,9 @@ export const UserLink: React.FC<{
                   <TypographySubtle>Following</TypographySubtle>
                 </div>
                 <div className="flex items-center justify-center gap-1">
-                  <TypographySmall>{followers?.length.toString() ?? 0}</TypographySmall>
+                  <TypographySmall>
+                    {followers?.length.toString() ?? 0}
+                  </TypographySmall>
                   <TypographySubtle>Followers</TypographySubtle>
                 </div>
               </div>
@@ -218,7 +228,7 @@ export const UserLink: React.FC<{
             </Avatar>
             <div className="space-y-1">
               <h4 className="text-sm font-semibold">@{name}</h4>
-              <div className="flex items-center pt-2 gap-3">
+              <div className="flex items-center gap-3 pt-2">
                 <div className="flex items-center justify-center gap-1">
                   <TypographySmall>
                     {following?.length.toString() ?? 0}
@@ -226,7 +236,9 @@ export const UserLink: React.FC<{
                   <TypographySubtle>Following</TypographySubtle>
                 </div>
                 <div className="flex items-center justify-center gap-1">
-                  <TypographySmall>{followers?.length.toString() ?? 0}</TypographySmall>
+                  <TypographySmall>
+                    {followers?.length.toString() ?? 0}
+                  </TypographySmall>
                   <TypographySubtle>Followers</TypographySubtle>
                 </div>
               </div>

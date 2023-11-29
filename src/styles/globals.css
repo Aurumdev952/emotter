@@ -2,72 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .container {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 0.6fr 1.4fr 1fr;
-    /* gap: 12px 9px; */
-    grid-auto-flow: row;
-    grid-template-areas:
-      "feed"
-      "feed"
-      "feed";
-    max-width: 100% !important;
-    height: 100vh;
-  }
-  @screen lg {
-    .container {
-      display: grid;
-    grid-template-columns: 0.6fr 1.2fr 0.8fr;
-    grid-template-rows: 0.6fr 1.4fr 1fr;
-    gap: 12px 9px;
-    grid-auto-flow: row;
-    grid-template-areas:
-      "menu feed sidebar"
-      "menu feed sidebar"
-      "menu feed sidebar";
-    max-width: 100% !important;
-    height: 100vh;
-    }
-  }
-  .menu {
-    grid-area: menu;
-  }
-
-  .feed {
-    display: grid;
-    grid-template-columns: repeat(2, 1.2fr) 0.8fr;
-    grid-template-rows: 0.4fr 1.6fr 1fr;
-    gap: 2px 0px;
-    grid-auto-flow: row;
-    grid-template-areas:
-      "title title title"
-      ". . ."
-      ". . .";
-    grid-area: feed;
-  }
-
-  .title {
-    grid-area: title;
-  }
-
-  .sidebar {
-    grid-area: sidebar;
-  }
-
-  .glass {
-    /* From https://css.glass */
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    /* border: 1px solid rgba(255, 255, 255, 0.3); */
-  }
-}
 
 @layer base {
-  html {
-    color: white;
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

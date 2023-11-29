@@ -21,7 +21,7 @@ import {
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MessageSquare, ThumbsUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -30,9 +30,8 @@ import { toast } from "react-hot-toast";
 import { UserLink } from "./UserProfileComp";
 import { CldImage } from "next-cloudinary";
 import Image from "next/image";
+import Linkify from "linkify-react";
 dayjs.extend(relativeTime);
-
-// TODO check if post is liked at the server because the post is not initially liked due to SSR😢
 
 export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
   content,
@@ -45,50 +44,12 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
 }) => {
   const { data, status } = useSession();
   const user = data?.user;
-  const [postLiked, setPostLiked] = useState<boolean>(() => {
-    if (user === undefined) return false;
-    const is_liked = likedBy.find((like) => like.userId === user.id);
-    // likedBy.forEach(like => {
-    //   if (like.userId === user.id) {
-    //     is_liked = true
-    //   }
-    // })
-    return is_liked !== undefined ? true : false;
-  });
+  const [postLiked, setPostLiked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(likedBy.length);
   const [commentsCount, setComments] = useState<number>(comments.length);
   const [commentState, setCommentstate] = useState<boolean>(false);
-  const likepost = api.tweet.likeTweet.useMutation({
-    onSuccess: () => {
-      setLikes((prev) => {
-        return prev + 1;
-      });
-      setPostLiked(true);
-      toast.success("Success liking");
-    },
-    onError: ({}) => {
-      // setLikes((prev) => {
-      //   return prev - 1
-      // })
-      // setPostLiked(false)
-      toast.error("error liking post");
-    },
-  });
-  const unlikePost = api.tweet.unlikeTweet.useMutation({
-    onSuccess: () => {
-      setLikes((prev) => {
-        return prev - 1;
-      });
-      setPostLiked(false);
-    },
-    onError: () => {
-      // setLikes((prev) => {
-      //   return prev + 1
-      // })
-      // setPostLiked(true)
-      toast.error("error unliking post");
-    },
-  });
+  const likepost = api.tweet.likeTweet.useMutation();
+  const unlikePost = api.tweet.unlikeTweet.useMutation();
 
   const updatedComment = () => {
     setComments((prev) => {
@@ -97,6 +58,46 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
     setCommentstate(false);
   };
 
+  useEffect(() => {
+    const user = data?.user;
+
+    if (user === undefined) {
+      setPostLiked(false);
+    } else {
+      const is_liked = likedBy.find((like) => like.userId === user?.id);
+      setPostLiked(is_liked !== undefined ? true : false);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (likepost.status === "success") {
+      setLikes((prev) => {
+        return prev + 1;
+      });
+      setPostLiked(true);
+      toast.success("Success liking");
+    } else if (likepost.status === "error") {
+      setLikes((prev) => {
+        return prev - 1;
+      });
+      setPostLiked(false);
+      toast.error("error liking post");
+    }
+  }, [likepost.status]);
+  useEffect(() => {
+    if (unlikePost.status === "success") {
+      setLikes((prev) => {
+        return prev - 1;
+      });
+      setPostLiked(false);
+    } else if (unlikePost.status === "error") {
+      setLikes((prev) => {
+        return prev + 1;
+      });
+      setPostLiked(true);
+      toast.error("error unliking post");
+    }
+  }, [unlikePost.status, unlikePost.isLoading]);
   return (
     <div className="w-full rounded-md border-[.1rem] border-slate-300 p-2">
       <div className="flex items-center justify-start gap-2 border-b-[.01rem] border-slate-700 p-3 pl-3 pt-0">
@@ -111,18 +112,30 @@ export const Tweet: React.FC<RouterOutputs["tweet"]["getAllTweets"][0]> = ({
         <TypographySubtle>{dayjs(createdAt).fromNow()}</TypographySubtle>
       </div>
       <Link href={`/post/${id}`} className="p-5">
-        <TypographyP>{content}</TypographyP>
+        <TypographyP>
+          <Linkify
+            as="p"
+            options={{
+              className: "text-blue-700 hover:underline",
+              attributes: {
+                target: "_blank"
+              }
+            }}
+          >
+            {content}
+          </Linkify>
+        </TypographyP>
         {images.length > 0 && (
-          <div className="mt-2 flex flex-col justify-center items-center">
+          <div className="mt-2 flex flex-col items-center justify-center">
             {images.map((image, i) => (
               <Image
-              src={image.url}
-              alt="image"
-              height={450}
-              width={360}
-              key={i}
-              className="rounded-md w-[95%]"
-              // placeholder="blur"
+                src={image.url}
+                alt="image"
+                height={450}
+                width={360}
+                key={i}
+                className="w-[95%] rounded-md"
+                // placeholder="blur"
               />
             ))}
           </div>

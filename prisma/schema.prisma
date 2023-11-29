@@ -3,7 +3,7 @@
 
 generator client {
     provider = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+    previewFeatures = ["fullTextIndex", "fullTextSearch"]
 }
 
 datasource db {
@@ -68,6 +68,8 @@ model User {
     sessions      Session[]
     followers Follows[] @relation("follower")
     following Follows[] @relation("following")
+
+    @@fulltext([name, bio])
 }
 
 model VerificationToken {
@@ -80,8 +82,8 @@ model VerificationToken {
 
 
 model Tweet {
-    id String @id @default(cuid()) 
-    content String  
+    id String @id @default(cuid())
+    content String
     authorId String
     likedBy UserOnTweet[]
     comments Comment[]
@@ -92,6 +94,7 @@ model Tweet {
 
 
     @@index([authorId])
+    @@fulltext([content])
 }
 
 model UserOnTweet {
@@ -122,6 +125,8 @@ model Comment {
     @@id([id, tweetId, authorId])
     @@index([tweetId])
     @@index([authorId])
+
+    @@fulltext([content])
 }
 
 

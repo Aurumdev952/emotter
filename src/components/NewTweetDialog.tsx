@@ -1,4 +1,4 @@
-"use client";
+
 
 import { ImageIcon, Plus } from "lucide-react";
 import { Button } from "~/components/ui/button";
@@ -29,7 +29,7 @@ export function DialogTweet() {
             {status !== "unauthenticated" ? <>New post</> : <>log in to post</>}
           </DialogTitle>
           {/* <DialogDescription>
-            
+
           </DialogDescription> */}
         </DialogHeader>
         <NewTweet />
@@ -101,7 +101,7 @@ export function ImageDialog({ image, setImage }: {image: {
                     image: URL.createObjectURL(file[0]),
                     file: file[0]
                   })
-                  
+
                 }
               }} />
             </label>
