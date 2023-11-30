@@ -17,7 +17,7 @@ import { api } from "~/utils/api";
 // TODO: add error handling for incorrect post id in url like post not found
 
 const Post: NextPage<{ id: string }> = ({ id }) => {
-    const postId: string = id !== undefined && typeof id === "string" ? id : ""; 
+    const postId: string = id !== undefined && typeof id === "string" ? id : "";
     const { data: tweet, isLoading, isError } = api.tweet.getTweet.useQuery(postId);
     const { data: comments } = api.tweet.getCommentOnTweets.useQuery(postId);
     const router = useRouter()
@@ -25,7 +25,8 @@ const Post: NextPage<{ id: string }> = ({ id }) => {
     <>
       <Head>
         <title>Emotter</title>
-        <meta name="description" content="Share what you think!" />
+        <meta property="og:title" content={tweet?.content ?? ""} />
+        {/* <meta property="description" content="Share what you think!" /> */}
         <link rel="icon" href="/emotter.svg" />
       </Head>
       <Layout>

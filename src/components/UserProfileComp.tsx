@@ -106,7 +106,7 @@ export const UserProfileComp: React.FC<
                   unfollow.mutate(id);
                 }
               }}
-              className="rounded-3xl border-2 border-darkblue bg-white text-darkblue"
+              className="rounded-3xl border-2 border-darkblue bg-white hover:text-white text-darkblue"
             >
               Following
             </Button>

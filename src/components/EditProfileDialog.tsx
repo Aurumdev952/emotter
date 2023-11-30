@@ -18,7 +18,7 @@ export function EditProfileDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="border-darkblue text-darkblue rounded-3xl border-2 bg-white">
+        <Button className="border-darkblue text-darkblue rounded-3xl border-2 hover:text-white bg-white">
           Edit
         </Button>
       </DialogTrigger>

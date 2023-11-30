@@ -9,25 +9,26 @@ import Link from "next/link";
 import Layout from "~/components/Layout";
 import { UserProfileComp } from "~/components/UserProfileComp";
 
-import {
-  TypographyH3,
-  TypographyH4,
-} from "~/components/ui/typography";
+import { TypographyH3, TypographyH4 } from "~/components/ui/typography";
 import { ssgHelper } from "~/server/api/helper";
 import { type RouterOutputs, api } from "~/utils/api";
 import { Tweet } from "~/components/tweet";
 import { type Color, type ColorElement } from "~/utils/colorTypes";
 import { useRouter } from "next/navigation";
 
-const UserProfile: NextPage<{ id: string, color: ColorElement["hex"] }> = ({ id, color }) => {
+const UserProfile: NextPage<{ id: string; color: ColorElement["hex"] }> = ({
+  id,
+  color,
+}) => {
   const userId: string = id !== undefined && typeof id === "string" ? id : "";
   const { data: user, isLoading, isError } = api.user.getUser.useQuery(userId);
-  const router = useRouter()
+  const router = useRouter();
   return (
     <>
       <Head>
         <title>Emotter - {user?.name}</title>
-        <meta name="description" content="Share what you think!" />
+        <meta property="og:description" content={user?.bio ?? ""} />
+        <meta property="og:title" content={user?.name ?? ""} />
         <link rel="icon" href="/emotter.svg" />
       </Head>
       <Layout>
@@ -40,7 +41,7 @@ const UserProfile: NextPage<{ id: string, color: ColorElement["hex"] }> = ({ id,
           </button>
           <p className="leading-7">Post</p>
         </div>
-        <div className="h-full w-full overflow-y-scroll pt-10 scrollbar scrollbar-track-transparent scrollbar-thumb-slate-400 scrollbar-thumb-rounded-md scrollbar-w-1">
+        <div className="scrollbar scrollbar-track-transparent scrollbar-thumb-slate-400 scrollbar-thumb-rounded-md scrollbar-w-1 h-full w-full overflow-y-scroll pt-10">
           {!!user && (
             <div className="flex w-full flex-col items-center justify-start">
               <UserProfileComp {...user} color={color} />
@@ -71,7 +72,7 @@ const UserTabs: React.FC<RouterOutputs["user"]["getUser"]> = ({
 }) => {
   return (
     <Tabs defaultValue="tweets" className="m-0 w-full">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-2 bg-darkblue">
         <TabsTrigger
           value="tweets"
           className="transition-colors duration-100 data-[state='active']:bg-slate-100 data-[state='active']:bg-opacity-10 data-[state='active']:text-slate-100"
@@ -108,7 +109,7 @@ const UserTabs: React.FC<RouterOutputs["user"]["getUser"]> = ({
             {likedTweets.length > 0 ? (
               <>
                 {likedTweets?.map((tweet, key) => (
-                  <Tweet {...tweet.tweet}  key={key} />
+                  <Tweet {...tweet.tweet} key={key} />
                 ))}
               </>
             ) : (
@@ -127,14 +128,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const id = context.params?.id;
   if (typeof id !== "string") throw new Error("no id");
   const ssr = ssgHelper();
-  const r = await fetch("https://www.colr.org/json/color/random")
-  const color = await r.json() as Color;
+  const r = await fetch("https://www.colr.org/json/color/random");
+  const color = (await r.json()) as Color;
   await ssr.user.getUser.prefetch(id);
   return {
     props: {
       trpcState: ssr.dehydrate(),
       id,
-      color: color.colors[0]?.hex
+      color: color.colors[0]?.hex,
     },
   };
 };
