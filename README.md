@@ -17,4 +17,6 @@ npm run dev
 
 Feel free to make a pull request.
 
+![Alt](https://repobeats.axiom.co/api/embed/2ab889766e1c9d3c0d6f640249e2ad99ce6ade56.svg "Repobeats analytics image")
+
 
